@@ -1,0 +1,25 @@
+services:
+  # FastAPI Service
+  fastapi:
+    build: .
+    container_name: fastapi-app
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+
+  # Dokku Service
+  dokku:
+    image: dokku/dokku:0.35.14
+    container_name: dokku
+    ports:
+      - "3022:22"  # SSH for Dokku
+      - "8080:80"  # HTTP for Dokku
+      - "8443:443" # HTTPS for Dokku
+    volumes:
+      - "/var/lib/dokku:/mnt/dokku"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      DOKKU_HOSTNAME: dokku.me
+      DOKKU_HOST_ROOT: /var/lib/dokku/home/dokku
+      DOKKU_LIB_HOST_ROOT: /var/lib/dokku/var/lib/dokku
+    restart: unless-stopped
